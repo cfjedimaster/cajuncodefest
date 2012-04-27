@@ -41,7 +41,8 @@ function profileViewCreateHandler() {
 		if($(".error",$VIEW).length) {
 			console.log("BAD");
 		} else {
-			console.log("GOOD");
+			storeProfile({name:name, goal:goal, weight: weight});
+			loadView("main");
 		}
 		return false;
 	});
@@ -59,4 +60,13 @@ function loadView(src, callback) {
 //user management
 function isKnown() {
 	return localStorage["user"];
+}
+
+function storeProfile(name, goal, weight) {
+	var p = {
+		name: name, 
+		goal: goal, 
+		initialWeight: weight
+	}
+	localStorage["user"] = JSON.stringify(p);
 }
