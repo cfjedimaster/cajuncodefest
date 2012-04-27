@@ -17,7 +17,7 @@ $(document).ready(function() {
 		console.log("Done with db and running appReady");
 
 		if(isKnown()) {
-			loadView("main");
+			loadView("main", mainViewHandler);
 		} else {
 			loadView("welcome", function () {
 
@@ -51,11 +51,17 @@ function profileViewCreateHandler() {
 			console.log("BAD");
 		} else {
 			storeProfile({name:name, goal:goal, weight: weight});
-			loadView("main");
+			loadView("main", mainViewHandler);
 		}
 		return false;
 	});
 
+}
+
+function mainViewHandler() {
+	$("#addReportButton").on("click", function() {
+		loadView("addReport");
+	});
 }
 
 //ui management
