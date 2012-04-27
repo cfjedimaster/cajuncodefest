@@ -1,25 +1,34 @@
 var $TITLE = "YSoFat?";
 var $VIEW;
+var dbController;
 
 $(document).ready(function() {
-	$VIEW = $("#viewArea");
 
+
+	dbController = new DBController();
+	
+	$VIEW = $("#viewArea");
 	$("title").text($TITLE);
 
-	console.log("Done");
+	//todo: loading screen animation
+	dbController.init("main","db/initial.sql",appReady);
 
+	function appReady() {
+		console.log("Done with db and running appReady");
 
-	if(isKnown()) {
-		alert("Not done, yo!");
-	} else {
-		loadView("welcome", function () {
+		if(isKnown()) {
+			loadView("main");
+		} else {
+			loadView("welcome", function () {
 
-			$("#beginButton").on("click", function() {
-				loadView("profile_create",profileViewCreateHandler);
+				$("#beginButton").on("click", function() {
+					loadView("profile_create",profileViewCreateHandler);
+				});
+
 			});
-
-		});
+		}
 	}
+
 });
 
 //view events
@@ -57,6 +66,8 @@ function loadView(src, callback) {
 		if(callback) callback();
 	});
 }
+
+
 //user management
 function isKnown() {
 	return localStorage["user"];
