@@ -1,24 +1,62 @@
 var $TITLE = "YSoFat?";
+var $VIEW;
 
 $(document).ready(function() {
+	$VIEW = $("#viewArea");
+
 	$("title").text($TITLE);
-	//$("#siteName").text($TITLE);
+
 	console.log("Done");
 
-	//Setup the ViewNavigator
-	window.viewNavigator = new ViewNavigator( '#viewArea' );	
 
 	if(isKnown()) {
 		alert("Not done, yo!");
 	} else {
-		$.get("views/welcome.html", {}, function(res) {
-			console.log(res);
-			var view = {title:"Welcome", view:$(res), backLabel:"Back"};
-			window.viewNavigator.pushView(view);
+		loadView("welcome", function () {
+
+			$("#beginButton").on("click", function() {
+				loadView("profile_create",profileViewCreateHandler);
+			});
+
 		});
 	}
 });
 
+//view events
+function profileViewCreateHandler() {
+
+	$("#createProfileButton").on("click", function () {
+		var name = $("#name").val();
+		var goal = $("input[name=goal]::checked").val();
+		var weight = $("#weight").val();
+		if(name == '') $("#name").parent().addClass("error");
+		else $("#name").parent().removeClass("error");
+
+		if(!goal) $("input[name=goal]").parent().parent().addClass("error");
+		else $("input[name=goal]").parent().parent().removeClass("error");
+
+		if(weight == '') $("#weight").parent().addClass("error");
+		else $("#weight").parent().removeClass("error");
+
+		if($(".error",$VIEW).length) {
+			console.log("BAD");
+		} else {
+			console.log("GOOD");
+		}
+		return false;
+	});
+
+}
+
+//ui management
+function loadView(src, callback) {
+	$.get("views/"+src+".html", {}, function(res) {
+		//possibly update title/history later
+		$VIEW.html(res);
+		if(callback) callback();
+	});
+}
+//user management
 function isKnown() {
-	return localStorage["username"];
+	return localStorage["user"];
 }
