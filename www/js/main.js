@@ -8,6 +8,7 @@ $(document).ready(function() {
 	dbController = new DBController();
 	
 	$VIEW = $("#viewArea");
+
 	$("title").text($TITLE);
 
 	//todo: loading screen animation
@@ -17,22 +18,30 @@ $(document).ready(function() {
 		console.log("Done with db and running appReady");
 
 		if(isKnown()) {
-			loadView("main", mainViewHandler);
+			loadView("main");
 		} else {
-			loadView("welcome", function () {
-
-				$("#beginButton").on("click", function() {
-					loadView("profile_create",profileViewCreateHandler);
-				});
-
-			});
+			loadView("welcome");
 		}
 	}
 
 });
 
 //view events
-function profileViewCreateHandler() {
+$(document).on("viewLoad", "#mainView", function(e) {
+	$("#addReportButton").on("click", function() {
+		loadView("addReport");
+	});
+});
+
+$(document).on("viewLoad", "#welcomeView", function(e) {
+
+	$("#beginButton").on("click", function() {
+		loadView("profile_create");
+	});
+
+});
+
+$(document).on("viewLoad", "#profileCreateView", function(e) {
 
 	$("#createProfileButton").on("click", function () {
 		var name = $("#name").val();
@@ -51,24 +60,30 @@ function profileViewCreateHandler() {
 			console.log("BAD");
 		} else {
 			storeProfile({name:name, goal:goal, weight: weight});
-			loadView("main", mainViewHandler);
+			loadView("main");
 		}
 		return false;
 	});
 
-}
+});
 
-function mainViewHandler() {
-	$("#addReportButton").on("click", function() {
-		loadView("addReport");
+$(document).on("viewLoad", "#addReportView", function(e) {
+	$("#cancelReportButton").on("click", function() {		
+		loadView("main");
+		return false;
 	});
-}
+});
+
 
 //ui management
 function loadView(src, callback) {
 	$.get("views/"+src+".html", {}, function(res) {
 		//possibly update title/history later
 		$VIEW.html(res);
+
+		var evt = document.createEvent("Event");
+		evt.initEvent("viewLoad", true,true);
+		if($("div", $VIEW).length) $("div", $VIEW)[0].dispatchEvent(evt);
 		if(callback) callback();
 	});
 }
